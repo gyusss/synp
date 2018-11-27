@@ -1,0 +1,26 @@
+{
+  "name": "synp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gyusss/synp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gyusss/synp/issues"
+  },
+  "homepage": "https://github.com/gyusss/synp#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "list": "^2.0.16",
+    "mongoose": "^5.3.13"
+  }
+}

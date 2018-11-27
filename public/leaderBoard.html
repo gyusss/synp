@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Leaderboard</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+<style>
+    body {
+  background-color: #FFF;
+  margin: 0 auto;
+}
+
+header {
+  background-color: #466995;
+  border-bottom: 1px solid #466995;
+  position: fixed;
+  width: 100%;
+  z-index: 10;
+}
+
+ul {
+  margin: 30px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+li {
+  color: #FFF;
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  text-transform: uppercase;
+  display: inline-block;
+  width: 80px;
+}
+
+li:hover {
+  color: #DBE9EE;
+}
+
+h1 {
+  color: #466995;
+  font-family: 'Oswald', sans-serif;
+  font-size: 32px;
+  font-weight: 300;
+  text-align:center;
+  text-transform: uppercase;
+}
+
+h2 {
+  color: #333;
+  font-family: 'Varela Round', sans-serif;
+  font-size: 26px;
+  font-weight: 100;
+  margin: 0 auto 20px auto;
+    text-align: center;
+}
+
+h3 {
+  color: #466995;
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 30px;
+}
+
+h4 {
+  color: #466995;
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-align: center;
+  text-transform: uppercase
+}
+
+div {
+  color: #333;
+  font-family: 'Varela Round', sans-serif;
+  font-size: 18px;
+}
+
+</style>
+    <p id="demo"></p>
+    <script>
+        var cnt = 0;
+        $(document).ready(function () {
+     $.getJSON('find', function(data) { 
+         var html = [];
+
+         $.each(data, function (i, item) {
+             cnt++;
+             html.push('<div >'); 
+             html.push('<h1 >' + cnt + '위 : ' + item.name + '</h1>'); 
+             html.push('<h2 >' + item.score+ '</h2>'); 
+
+             html.push('</div>'); 
+             html.push('</div>'); //html.push('<li id="' + key + '">' + val + '</li>');
+         }); console.log(html); $('#target').html(html.join(''));
+     });
+ });
+
+    </script>
+    <div id="target" />
+    </body>
+
+</html>

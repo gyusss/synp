@@ -1,0 +1,252 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+    <title>Acid_Rain</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <embed src="./gmusic.mp3" autostart ="true" hidden ="true">
+    <style>
+        #canvas {
+            background-color: #A2D4FF;
+            width: 1000px;
+            height: 750px;
+        }
+
+        #line {
+            border: 3px solid #FFA3D4;
+        }
+
+        #text {
+            font-size: 23px;
+            width: 300px;
+            height: 30px;
+        }
+
+        #auth {
+            width: 100px;
+            height: 30px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+        <div id="canvas"></div>
+        <hr id="line" width="994" align="left">
+        <input id="text" placeholder="text" onkeypress="keydown(event.keyCode)">
+        <button id="auth" onclick="keydown(13)">인증</button>
+        <br>
+        <b><font size="5" id="point">포인트</font><p style="color:rgb"><font size="5" id="heart"><b>목숨</b></font></p></b>
+
+        <script type="text/javascript">
+
+
+            var canvasWidth = 850; // 키워드 생성되는 가로범위
+            var canvasHeigth = 725; // 키워드 생성되는 세로범위
+            var goal, keyword = [];
+            var cnt = 0;
+            var deltaSpeed = 0;
+            var fin = false;
+            var username = "AAA";
+            function getQuerystring(paramName) {
+                var _tempUrl = window.location.search.substring(1);
+                var _tempArray = _tempUrl.split('&');
+
+                for (var i = 0; _tempArray.length; i++) {
+                    var _keyValuePair = _tempArray[i].split('=');
+                    if (_keyValuePair[0] == paramName) {
+                        return _keyValuePair[1];
+                    }
+                }
+            }
+
+            try {
+                var level = getQuerystring("level"); var point = parseInt(getQuerystring("point")); var heart = getQuerystring("heart");
+                document.body.style.background = color;
+            }
+
+            catch (exception) { var level = 1; var point = 0; var heart = 70;  }
+            alert(level + " 단계를 시작합니다.");
+
+            $.get('/wordkor.dat', function (txtFile) {
+                keyword = txtFile.split(" ");
+                shuffle(keyword);
+            });
+
+            goal = parseInt(18) + parseInt(level) * 3; // 목표 포인트
+
+            var keyword_cnt = 0;
+
+            document.getElementById('point').innerHTML = "포인트 : " + point;
+            document.getElementById('heart').innerHTML = "pH : " + heart / 10;
+            var color = "#" + (200 - heart * 2).toString(16) + (20 + heart * 3).toString(16) + (heart * 3 + 20).toString(16);
+            // document.getElementById('heart').style.color = color;
+            document.body.style.background = color;
+
+            function gamewin() {
+                clearInterval(setInterval1);
+                clearInterval(setInterval2);
+                    var nextlevel = (parseInt(level) + 1);
+                    var message = "<h1>" + (parseInt(nextlevel) - 1) + "단계 통과!</h1><br><a href='?level=" + nextlevel + "&point=" + point + "&heart=" + heart + "'>다음 스테이지</a>";
+
+                    document.body.innerHTML = message;
+                
+            }
+
+            function shuffle(a) {
+                for (let i = a.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [a[i], a[j]] = [a[j], a[i]];
+                }
+                return a;
+            }
+
+
+            function remove_node(pRemoveEle) {
+                var vRemove = document.getElementById(pRemoveEle);
+                var vParent = vRemove.parentNode;
+                vParent.removeChild(vRemove);
+                vRemove = null;
+            }
+
+            function gameover(code) {
+                clearInterval(setInterval1);
+                clearInterval(setInterval2);
+
+                document.body.style.background = "#CCEEFF";
+                var message = "<h1>게임 오버 :(</h1><b>최종 스코어 : " + point + "</b><hr>";
+
+                document.body.innerHTML = message + "<a href='?level=1&point=0&heart=70'><button><h3>Restart</h3></button></a>" + "<input id=\"text\" placeholder=\"text\"><button id=\"auth\"onclick=\"pushLeaderBoard()\"><h3>Submit to Leaderboard</h3></button>" + "<a href='leaderboard' target=\"_blank\"><button><h3>Show LeaderBoard</h3></button></a>";
+                
+            }
+
+            function pushLeaderBoard() {
+                var name = document.getElementById('text');
+                alert(name.value + " : " + point + " is succesfully on Leaderboard! ");
+
+                window.location.href = "create?name="+name.value+"&score="+point;
+            }
+
+
+            function random_width() {
+                return parseInt(Math.random() * canvasWidth) + 50;
+            }
+
+            function keyword_rain() {
+                this.y = 0;
+                temp = 2;
+                for(kk = 1; kk <= level; kk++) {
+                   temp += 1 - 0.1 * kk;
+                }
+
+                this.speed = temp;
+                var isSpecial = Math.random();
+                this.node = document.createElement('h3');
+                if(isSpecial < 0.15) this.node.style.color = "blue";
+                this.node.id = keyword[keyword_cnt];
+                //console.log(this.node.id);
+                //console.log(keyword_cnt);
+                this.node.innerHTML = keyword[keyword_cnt++];
+
+
+                if (keyword_cnt >= keyword.length) {
+                    clearInterval(setInterval1);
+                }
+
+                this.node.style.position = 'absolute';
+                this.node.style.left = random_width();
+
+                document.getElementById('canvas').appendChild(this.node);
+
+                keyword_rain.prototype.move = function () {
+                    if (this.y > canvasHeigth && keyword.indexOf(this.node.id) === 0) { // 땅에 닿았을 때
+                        console.log(keyword.indexOf(this.node.id))
+                        if (this.y > canvasHeigth) heart -= this.node.id.length;
+
+                        var color = "#" + (200 - heart * 2).toString(16) + (20 + heart * 3).toString(16) + (heart * 3 + 20).toString(16);
+                        document.body.style.background = color;
+
+                        $(this.node).empty(); // 태그 삭제 (jQuery)
+                        this.y = this.speed = 0;
+                        keyword.splice(keyword.indexOf(this.node.id), 1);
+                        keyword_cnt -= 1;
+                        console.log("땅에 닿았음!" + this.node.id);
+                        document.getElementById('heart').innerHTML = "pH : " + (heart / 10);
+
+                        if (heart < 1) gameover(1);
+                        if (keyword_cnt == 0 && (fin == true)) { gamewin(); return; }
+                        return;
+                    }
+                    
+                    this.y += (this.speed + deltaSpeed) * 3;
+                    this.node.style.top = this.y + 'px';
+                }
+            }
+
+
+            function keydown(keyCode) {
+                if (keyCode == 13) {
+                    var text = document.getElementById('text'); // 사용자 입력폼
+
+                    if (keyword.indexOf(text.value) !== -1) { // 입력한 값이 키워드에 있으면 실행
+                        point += text.value.length * 50;
+                        if (document.getElementById(keyword[keyword.indexOf(text.value)]).style.color === "blue") {
+                            
+                            var dice = Math.random();
+
+                            if (dice < 0.2) {
+                                heart = 70;
+                                color = "#" + (200 - heart * 2).toString(16) + (20 + heart * 3).toString(16) + (heart * 3 + 20).toString(16);
+                                document.body.style.background = color;
+                                document.getElementById('heart').innerHTML = "pH : " + (heart / 10);
+                            }
+                            else if (dice < 0.6) deltaSpeed = 3;
+                            else deltaSpeed = -1;
+                            
+                        }
+                        console.log("Remove : " + document.getElementById(keyword[keyword.indexOf(text.value)]).id);
+                        var element = document.getElementById(keyword[keyword.indexOf(text.value)]);
+                        element.parentNode.removeChild(element);
+
+                        for (var i in game) {
+                            if (game[i]['node'].id == text.value) {
+                                game[i]['y'] = 0;
+                                game[i]['speed'] = 0;
+                            }
+                        }
+                        keyword.splice(keyword.indexOf(text.value), 1);
+                        keyword_cnt -= 1;
+                        console.log("MINUS");
+                        document.getElementById('point').innerHTML = "포인트 : " + point;
+                    }
+
+                    console.log(keyword.indexOf(text.value));
+                    text.value = "";
+                    if (keyword_cnt == 0 && (fin == true)) { gamewin(); return; }
+                }
+                return;
+            }
+
+            var game = [];
+
+            var setInterval1 = setInterval(function () {
+                if (cnt < goal) {
+                    game.push(new keyword_rain());
+                    cnt++;
+                    if (cnt == goal) fin = true;
+                    if (keyword_cnt == 0 && (fin == true)) { gamewin(); return; }
+                }
+
+                else {
+                    fin = true;
+                    if (keyword_cnt == 0 && (fin == true)) { gamewin(); return; }
+                }
+            }, 1100 - level * 70); // 1초마다 키워드 생성
+
+            var setInterval2 = setInterval(function () {
+                for (var x in game) { game[x].move(); }
+            }, 100 - level*5); // 키워드 움직이기
+
+        </script>
+</body>
+</html>
