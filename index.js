@@ -92,11 +92,11 @@ app.use(express.static('static'))
     })
 
     app.get('/wordkor.dat', (req, res) => {
-        res.sendFile('wordkor.dat');
+        res.sendFile('/home/sparcs/synp/public/wordkor.dat');
     })
 
     app.get('/gmusic.mp3', (req, res) => {
-        res.sendFile('gmusic.mp3');
+        res.sendFile('/home/sparcs/synp/public/gmusic.mp3');
     })
     const server = app.listen(8000, () => {
         console.log('server is running at 8000');
